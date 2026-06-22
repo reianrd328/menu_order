@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<section>
+  <h2>Add New Menu Item</h2>
+  <form method="post" action="{{ url_for('add_menu') }}" class="form inline" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Item name" required>
+    <input type="text" name="description" placeholder="Description">
+    <input type="number" step="0.01" name="price" placeholder="Price" required>
+    <input type="file" name="image" accept="image/*">
+    <label><input type="checkbox" name="available" checked> Available today</label>
+    <button type="submit">Add</button>
+  </form>
+</section>
+
+<section>
+  <h2>Menu Items</h2>
+  <table>
+    <thead>
+      <tr><th>Photo</th><th>Name</th><th>Description</th><th>Price</th><th>Available</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for item in menu %}
+      <tr>
+        <form method="post" action="{{ url_for('edit_menu', item_id=item.id) }}" enctype="multipart/form-data">
+          <td>
+            {% if item.image %}
+              <img src="{{ url_for('static', filename='uploads/' + item.image) }}" style="height:50px;border-radius:4px;">
+            {% endif %}
+            <input type="file" name="image" accept="image/*">
+          </td>
+          <td><input name="name" value="{{ item.name }}"></td>
+          <td><input name="description" value="{{ item.description or '' }}"></td>
+          <td><input type="number" step="0.01" name="price" value="{{ item.price }}"></td>
+          <td><input type="checkbox" name="available" {% if item.available %}checked{% endif %}></td>
+          <td>
+            <button type="submit">Save</button>
+        </form>
+        <form method="post" action="{{ url_for('delete_menu', item_id=item.id) }}" style="display:inline" onsubmit="return confirm('Delete?')"><button type="submit" class="danger">Delete</button>
+          </form>
+          </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Orders<a href="{{ url_for('export_orders') }}" class="btn-export">Export CSV</a>
+    <button onclick="window.print()" class="btn-print">Print</button>
+  </h2>
+  <table id="orders-table">
+    <thead>
+      <tr><th>#</th><th>Customer</th><th>Phone</th><th>Item</th><th>Qty</th><th>Total</th><th>Notes</th><th>Status</th><th>Time</th><th class="no-print">Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for o in orders %}
+      <tr class="status-{{ o.status }}">
+        <td>{{ o.id }}</td>
+        <td>{{ o.customer_name }}</td>
+        <td>{{ o.customer_phone }}</td>
+        <td>{{ o.menu_name }}</td>
+        <td>{{ o.quantity }}</td>
+        <td>₱{{ "%.2f"|format(o.price * o.quantity) }}</td>
+        <td>{{ o.notes }}</td>
+        <td>{{ o.status }}</td>
+        <td>{{ o.created_at }}</td>
+        <td class="no-print">
+          <form method="post" action="{{ url_for('update_order', order_id=o.id, status='done') }}" style="display:inline">
+            <button type="submit">Done</button>
+          </form>
+          <form method="post" action="{{ url_for('update_order', order_id=o.id, status='cancelled') }}" style="display:inline">
+            <button type="submit" class="danger">Cancel</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Admin Accounts</h2>
+  <form method="post" action="{{ url_for('create_admin') }}" class="form inline">
+    <input type="text" name="username" placeholder="New username" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <button type="submit">Create Admin</button>
+  </form><table style="margin-top:1rem;max-width:400px">
+    <thead><tr><th>Username</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for a in admins %}
+      <tr>
+        <td>{{ a.username }}</td>
+        <td>
+          {% if a.id != session.admin_id %}
+          <form method="post" action="{{ url_for('delete_admin', admin_id=a.id) }}" onsubmit="return confirm('Delete admin?')">
+            <button type="submit" class="danger">Delete</button>
+          </form>
+          {% else %}
+            <em>(you)</em>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <h1>Today's Menu</h1>
+  <p>Fresh dishes ready for you. Order now and leave a review.</p>
+</section>
+
+<section class="menu-grid">
+  {% for item in menu %}
+    <div class="card">
+      {% if item.image %}
+        <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}" class="menu-img">
+        {% endif %}  
+      <h3>{{ item.name }}</h3>
+      <p class="desc">{{ item.description or "" }}</p>
+      <p class="price">₱{{ "%.2f"|format(item.price) }}</p>
+
+      <details>
+        <summary>Order this</summary>
+        <form action="{{ url_for('place_order') }}" method="post" class="form">
+          <input type="hidden" name="menu_id" value="{{ item.id }}">
+          <input type="text" name="customer_name" placeholder="Your name" required>
+          <input type="text" name="customer_phone" placeholder="Phone" required>
+          <input type="number" name="quantity" min="1" value="1" required>
+          <textarea name="notes" placeholder="Notes (optional)"></textarea>
+          <button type="submit">Place order</button>
+        </form>
+      </details>
+
+      <details>
+        <summary>Leave a review</summary>
+        <form action="{{ url_for('leave_review') }}" method="post" class="form">
+          <input type="hidden" name="menu_id" value="{{ item.id }}">
+          <input type="text" name="customer_name" placeholder="Your name" required>
+          <select name="rating" required>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+          <textarea name="comment" placeholder="Your comment"></textarea>
+          <button type="submit">Send review</button>
+        </form>
+      </details>
+    </div>
+  {% else %}
+    <p>No menu available right now. Check back soon.</p>
+  {% endfor %}
+</section>
+
+<section class="reviews">
+  <h2>Recent Reviews</h2>
+  {% for r in reviews %}
+    <div class="review">
+      <strong>{{ r.customer_name }}</strong> on<em>{{ r.menu_name }}</em>
+      <span class="stars">{{ "★" * r.rating }}{{ "☆" * (5 - r.rating) }}</span>
+      <p>{{ r.comment }}</p>
+      <small>{{ r.created_at }}</small>
+    </div>
+  {% else %}
+    <p>No reviews yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}
