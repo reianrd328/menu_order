@@ -142,4 +142,13 @@ section h2 { margin-bottom: 1rem; color: #2d3436; }
   .form.inline button {
     width: 100%;
   }
+
+  /* Food Menu Card Image Handling */
+.menu-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;     /* Crops image perfectly inside card container boundaries */
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
+}
 }
