@@ -191,14 +191,16 @@ def edit_menu(item_id):
     name = request.form.get('name')
     description = request.form.get('description')
     price = request.form.get('price')
+    image = request.form.get('image', '') # Added this line to grab your image URL text!
     available = 1 if request.form.get('available') == 'on' else 0
 
     try:
         db = get_db()
         cur = db.cursor()
+        # Included image = %s in the database update statement below
         cur.execute(
-            "UPDATE menu SET name = %s, description = %s, price = %s, available = %s WHERE id = %s",
-            (name, description, price, available, item_id)
+            "UPDATE menu SET name = %s, description = %s, price = %s, image = %s, available = %s WHERE id = %s",
+            (name, description, price, image, available, item_id)
         )
         db.commit()
         cur.close()
@@ -207,7 +209,6 @@ def edit_menu(item_id):
     except Exception as e:
         flash(f"Failed to update menu: {e}", "danger")
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/admin/menu/delete/<int:item_id>', methods=['POST'])
 def delete_menu(item_id):
     if not session.get('admin_id'):
