@@ -101,12 +101,14 @@ section h2 { margin-bottom: 1rem; color: #2d3436; }
 
 /* For Smartphones (Width under 576px) */
 @media (max-width: 576px) {
-  .topbar {
-    flex-direction: column;
-    gap: 1rem;
-    text-align: center;
-    padding: 1rem;
-  }
+  .topbar { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 1rem 2rem; 
+  background: #b83526; /* Updated to match your exact logo red background color */
+  color: #fff; 
+}
 
   .topbar nav {
     justify-content: center;
