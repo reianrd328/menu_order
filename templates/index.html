@@ -5,49 +5,63 @@
   <p>Fresh dishes ready for you. Order now and leave a review.</p>
 </section>
 
-<section class="menu-grid">
+<div class="menu-grid">
   {% for item in menu %}
-    <div class="card">
+    <div class="card" style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+      
+      <!-- Safe Image Render Area -->
       {% if item.image %}
-        <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}" class="menu-img">
-        {% endif %}  
-      <h3>{{ item.name }}</h3>
-      <p class="desc">{{ item.description or "" }}</p>
-      <p class="price">₱{{ "%.2f"|format(item.price) }}</p>
+        <img src="{{ item.image }}" alt="{{ item.name }}" class="menu-img">
+      {% else %}
+        <!-- Fallback image block so cards never look empty if no URL is given -->
+        <div style="width: 100%; height: 180px; background: #fdf2f0; display: flex; align-items: center; justify-content: center; color: #b83526; font-size: 0.9rem; font-weight: 500;">
+          🍳 Tropical Almusal Delight
+        </div>
+      {% endif %}
 
-      <details>
-        <summary>Order this</summary>
-        <form action="{{ url_for('place_order') }}" method="post" class="form">
-          <input type="hidden" name="menu_id" value="{{ item.id }}">
-          <input type="text" name="customer_name" placeholder="Your name" required>
-          <input type="text" name="customer_phone" placeholder="Phone" required>
-          <input type="number" name="quantity" min="1" value="1" required>
-          <textarea name="notes" placeholder="Notes (optional)"></textarea>
-          <button type="submit">Place order</button>
-        </form>
-      </details>
+      <!-- Text Padding Area -->
+      <div style="padding: 1.5rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description or '' }}</p>
+          <p class="price">₱{{ "%.2f"|format(item.price) }}</p>
+        </div>
+        
+        <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <details>
+            <summary style="cursor: pointer; color: #3498db; font-weight: 500;">▶ Order this</summary>
+            <form action="{{ url_for('place_order') }}" method="post" class="form" style="margin-top: 0.5rem;">
+              <input type="hidden" name="menu_id" value="{{ item.id }}">
+              <input type="text" name="customer_name" placeholder="Your Name" required>
+              <input type="text" name="customer_phone" placeholder="Phone Number" required>
+              <input type="number" name="quantity" value="1" min="1" style="width: 70px;" required>
+              <textarea name="notes" placeholder="Special requests..."></textarea>
+              <button type="submit" style="width: 100%;">Submit Order</button>
+            </form>
+          </details>
 
-      <details>
-        <summary>Leave a review</summary>
-        <form action="{{ url_for('leave_review') }}" method="post" class="form">
-          <input type="hidden" name="menu_id" value="{{ item.id }}">
-          <input type="text" name="customer_name" placeholder="Your name" required>
-          <select name="rating" required>
-            <option value="5">★★★★★</option>
-            <option value="4">★★★★☆</option>
-            <option value="3">★★★☆☆</option>
-            <option value="2">★★☆☆☆</option>
-            <option value="1">★☆☆☆☆</option>
-          </select>
-          <textarea name="comment" placeholder="Your comment"></textarea>
-          <button type="submit">Send review</button>
-        </form>
-      </details>
+          <details>
+            <summary style="cursor: pointer; color: #3498db; font-weight: 500;">▶ Leave a review</summary>
+            <form action="{{ url_for('leave_review') }}" method="post" class="form" style="margin-top: 0.5rem;">
+              <input type="hidden" name="menu_id" value="{{ item.id }}">
+              <input type="text" name="customer_name" placeholder="Your Name" required>
+              <select name="rating" required>
+                <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                <option value="3">⭐⭐⭐ 3 Stars</option>
+                <option value="2">⭐⭐ 2 Stars</option>
+                <option value="1">⭐ 1 Star</option>
+              </select>
+              <textarea name="comment" placeholder="Your review..."></textarea>
+              <button type="submit" style="width: 100%; background: #e67e22;">Submit Review</button>
+            </form>
+          </details>
+        </div>
+      </div>
+
     </div>
-  {% else %}
-    <p>No menu available right now. Check back soon.</p>
   {% endfor %}
-</section>
+</div>
 
 <section class="reviews">
   <h2>Recent Reviews</h2>
