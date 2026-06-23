@@ -4,6 +4,7 @@ import csv
 from flask import Flask, render_template, request, redirect, url_for, flash, session, Response
 from dotenv import load_dotenv
 import mysql.connector
+from datetime import timedelta  # Add this import at the top
 
 load_dotenv()
 
@@ -136,7 +137,8 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         if username == "admin" and password == "admin123":
-            session['admin_id'] = 1  # Using admin_id to match your base.html session checks
+            session.permanent = True  # <--- Flags this session to automatically expire!
+            session['admin_id'] = 1  
             return redirect(url_for('admin_dashboard'))
         flash("Invalid credentials.", "danger")
     return render_template('login.html')
