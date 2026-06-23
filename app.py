@@ -73,6 +73,9 @@ def get_db():
 
 @app.route('/')
 def index():
+    # Automatically clear the admin login session whenever someone hits the root URL link
+    session.clear() 
+    
     try:
         db = get_db()
         cur = db.cursor(dictionary=True)
