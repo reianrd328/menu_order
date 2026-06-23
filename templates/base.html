@@ -7,8 +7,10 @@
 </head>
 <body>
   <header class="topbar">
-    <a href="{{ url_for('index') }}" class="brand">Today's Kitchen</a>
-    <nav>
+    <a href="{{ url_for('index') }}" class="brand">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="Tropical Almusal Logo" style="height: 60px; width: auto; display: block;">
+    </a>
+    <nav style="display: flex; align-items: center;">
       {% if session.admin_id %}
         <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
         <a href="{{ url_for('logout') }}">Logout</a>
